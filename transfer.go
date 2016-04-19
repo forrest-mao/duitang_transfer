@@ -34,12 +34,14 @@ func readJson(fp string) *Table {
 	return inputJson
 }
 
-// transfer named group
+// transfer named group routers to numbered group routers
 func transferRules(inputJson *Table) []byte {
+
 	for i, val := range inputJson.Routers {
 		pattern := val.Pattern
 		repl := val.Repl
 
+		// replace named group to numbered group
 		re := regexp.MustCompile(pattern)
 		for i := 1; i <= re.NumSubexp(); i++ {
 			repl = strings.Replace(repl, re.SubexpNames()[i], strconv.Itoa(i), -1)
@@ -52,6 +54,7 @@ func transferRules(inputJson *Table) []byte {
 		panic(err)
 	}
 
+	// replace pattern strings
 	outputJson = bytes.Replace(outputJson, []byte("\\u003c"), []byte("<"), -1)
 	outputJson = bytes.Replace(outputJson, []byte("\\u003e"), []byte(">"), -1)
 	outputJson = bytes.Replace(outputJson, []byte("\\u0026"), []byte("&"), -1)

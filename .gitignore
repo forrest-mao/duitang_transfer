@@ -1,0 +1,14 @@
+.DS_Store
+*.sw?
+.vagrant/
+*.pyc
+.vscode/
+# for development
+nodes/slave*
+vagrant/build
+vagrant/.vagrant
+logstash/env2/*
+stepping_stone/etc/development.ini
+vendor/bundle
+/.bundle
+*.a

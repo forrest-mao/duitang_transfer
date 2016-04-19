@@ -11,6 +11,26 @@ import (
 	"strings"
 )
 
+// json format
+// {
+// 	"hosts": [
+// 		"itisatest.qiniudn.com"
+// 	],
+// 	"routers": [
+// 		{
+// 			"Pattern": "^((?:/[^/]+)*/[^.]+)[.]thumb[.]([1-9]\\d*)_0_c[.]([^_]+)_(jpeg|webp)$",
+// 			"Repl": "${1}.${3}?imageMogr2/format/${4}/quality/90/thumbnail/${2}x/ignore-error/1",
+// 			"Comment": "x_0 / convert_format"
+// 		},
+// 		{
+// 			"Pattern": "^((?:/[^/]+)*/[^.]+)[.]thumb[.]0_([1-9]\\d*)_c[.]([^_]+)_(jpeg|webp)$",
+// 			"Repl": "${1}.${3}?imageMogr2/format/${4}/quality/90/thumbnail/x${2}/ignore-error/1",
+// 			"Comment": "0_x / convert_format"
+// 		}
+// 	]
+// 	"version": "71848b9ef9074fbf9c5cfec206f8e27b"
+// }
+
 type Router struct {
 	Pattern string `json: pattern`
 	Repl    string `json: repl`
@@ -70,12 +90,21 @@ func transferRules(inputJson *Table) []byte {
 func main() {
 
 	flag.Parse()
-	if flag.NArg() < 1 {
-		fmt.Println("Usage: transfer json_path")
+	if flag.NArg() < 2 {
+		fmt.Println("Usage: ./transfer json_from_path json_to_path")
 		return
 	}
 
-	fp := flag.Arg(0)
+	fromPath := flag.Arg(0)
+	toPath := flag.Arg(1)
 
-	fmt.Println(string(transferRules(readJson(fp))))
+	//fmt.Println(string(transferRules(readJson(fp))))
+
+	// write outputJson to file
+	err := ioutil.WriteFile(toPath, transferRules(readJson(fromPath)), 0666)
+	if err != nil {
+		panic(err)
+	} else {
+		fmt.Println("transfer to " + toPath + " finished")
+	}
 }
